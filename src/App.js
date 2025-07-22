@@ -42,16 +42,18 @@ function App() {
         <h1>Set Message on Smart Contract</h1>
         <input
           type="text"
-          placeholder="Set message"
+          placeholder="Set a Message here and sign it with metamask"
+          className="input-field"
           value={text}
           onChange={(e) => setText(e.target.value)}
-        />
-        <button onClick={handleSet}>Set Message</button>
+        /><br></br>
+        <button onClick={handleSet} className="message-button">Set Message</button>
       </div>
 
       <div style={{ padding: "2rem" }}>
         <h1>Get Message from Smart Contract</h1>
         <button
+        className="message-button"
           onClick={async () => {
             try {
               if (window.ethereum) {
@@ -72,6 +74,7 @@ function App() {
         >
           Get Message
         </button>
+      <h2 style={{marginTop: "80px"}}>By: Bilal Oyeleke Soliu</h2>
       </div>
     </>
   );

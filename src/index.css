@@ -15,11 +15,22 @@ body {
   border: none;
   border-radius: 5px;
   margin-top: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.message-button:hover {
+  background-color: rgb(185, 112, 15);
 }
 
 .input-field {
-  height: 70px;
+  height: 40px;
   width: 300px;
+  padding: 0 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 code {

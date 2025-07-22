@@ -6,9 +6,10 @@ const contractAddress = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
 
 function App() {
   const [text, setText] = useState("");
+  const [fetchedMessage, setFetchedMessage] = useState("");
 
   async function requestAccount() {
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
+    await window.ethereum.request({ method: "eth_requestAccounts" });
   }
 
   const handleSet = async () => {
@@ -24,11 +25,11 @@ function App() {
         const signer = await provider.getSigner();
         const contract = new ethers.Contract(contractAddress, abi, signer);
 
-        const tx = await contract.setMessage(text); 
-        const txReceipt = await tx.wait();
-        console.log("Transaction successful:", txReceipt);
+        const tx = await contract.setMessage(text);
+        await tx.wait();
+        console.log("Message set successfully");
       } else {
-        console.error("MetaMask not found. Please install MetaMask to use this application.");
+        console.error("MetaMask not found.");
       }
     } catch (error) {
       console.error("Error setting message:", error);
@@ -36,47 +37,50 @@ function App() {
     }
   };
 
-  return (
-    <>
-      <div style={{ padding: "2rem" }}>
-        <h1>Set Message on Smart Contract</h1>
-        <input
-          type="text"
-          placeholder="Set a Message here and sign it with metamask"
-          className="input-field"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        /><br></br>
-        <button onClick={handleSet} className="message-button">Set Message</button>
-      </div>
+  const handleGet = async () => {
+    try {
+      if (window.ethereum) {
+        await requestAccount();
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const contract = new ethers.Contract(contractAddress, abi, provider);
 
-      <div style={{ padding: "2rem" }}>
-        <h1>Get Message from Smart Contract</h1>
-        <button
-        className="message-button"
-          onClick={async () => {
-            try {
-              if (window.ethereum) {
-                await requestAccount();
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                const contract = new ethers.Contract(contractAddress, abi, provider);
-                
-                const message = await contract.getMessage();
-                alert(`Message from contract: ${message}`);
-              } else {
-                console.error("MetaMask not found. Please install MetaMask to use this application.");
-              }
-            } catch (error) {
-              console.error("Error getting message:", error);
-              alert(error.message || error);
-            }
-          }}
-        >
-          Get Message
-        </button>
-      <h2 style={{marginTop: "80px"}}>By: Bilal Oyeleke Soliu</h2>
-      </div>
-    </>
+        const message = await contract.getMessage();
+        setFetchedMessage(message);
+      } else {
+        console.error("MetaMask not found.");
+      }
+    } catch (error) {
+      console.error("Error getting message:", error);
+      alert(error.message || error);
+    }
+  };
+
+  return (
+    <div style={{ padding: "2rem" }}>
+      <h1>Set Message on Smart Contract</h1>
+      <input
+        className="input-field"
+        type="text"
+        placeholder="Enter your message"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <br />
+      <button className="message-button" onClick={handleSet}>
+        Set Message
+      </button>
+
+      <h1 style={{ marginTop: "3rem" }}>Get Message from Smart Contract</h1>
+      <button className="message-button" onClick={handleGet}>
+        Get Message
+      </button>
+
+      {fetchedMessage && (
+        <p style={{ marginTop: "1rem", fontSize: "1.2rem", color: "#333" }}>
+          <strong>Fetched Message:</strong> {fetchedMessage}
+        </p>
+      )}
+    </div>
   );
 }
 
